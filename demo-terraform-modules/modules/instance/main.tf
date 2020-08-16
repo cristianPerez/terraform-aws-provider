@@ -25,11 +25,21 @@ resource "aws_security_group" "ssh_conection" {
     }
   }
 
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+  #egress {
+  #  from_port   = 0
+  #  to_port     = 0
+  #  protocol    = "-1"
+  #  cidr_blocks = ["0.0.0.0/0"]
+  #}
+
+  dynamic "egress" {
+    for_each = var.egress_rules
+    content {
+      from_port   = egress.value.from_port
+      to_port     = egress.value.to_port
+      protocol    = egress.value.protocol
+      cidr_blocks = egress.value.cidr_blocks
+    }
   }
 
   tags = {
@@ -47,4 +57,13 @@ resource "aws_instance" "terraform-instance" {
   #}
   tags = var.tags
   security_groups = ["${aws_security_group.ssh_conection.name}"]
+  provisioner "remote-exec" {
+    connection {
+      type = "ssh"
+      user = "ubuntu"
+      private_key = file("~/.ssh/packer-key")
+      host = self.public_ip
+    }
+    inline = ["echo hello","docker run -it -d -p 80:80 cperez354/hello-terraform:v2"]
+  }
 }
