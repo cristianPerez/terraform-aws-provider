@@ -22,3 +22,8 @@ variable "ingress_rules" {
   default=""
   description="Ingress rules for security group name"
 }
+
+variable "egress_rules" {
+  default=""
+  description="Egress rules for security group name"
+}
