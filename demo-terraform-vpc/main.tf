@@ -29,15 +29,12 @@ resource "aws_internet_gateway" "dev_main_internet_gateway" {
 }
 
 # Creating a public Route Table
-
 resource "aws_route_table" "dev_public_route_table" {
   vpc_id = aws_vpc.dev_main_vpc.id
-
   route {
     cidr_block = var.public_cidr_rt
     gateway_id = aws_internet_gateway.dev_main_internet_gateway.id
   }
-
   tags = {
     Name = "dev_public_route_table"
   }
@@ -54,7 +51,6 @@ resource "aws_default_route_table" "dev_private_route_table" {
 }
 
 # Creating the public subnets
-
 resource "aws_subnet" "dev_public_subnet" {
   count  = 2
   vpc_id = aws_vpc.dev_main_vpc.id
@@ -69,7 +65,6 @@ resource "aws_subnet" "dev_public_subnet" {
 }
 
 # Creating the private subnets
-
 resource "aws_subnet" "dev_private_subnet" {
   count  = 2
   vpc_id = aws_vpc.dev_main_vpc.id
@@ -84,7 +79,6 @@ resource "aws_subnet" "dev_private_subnet" {
 }
 
 # AWS public Route table association
-
 resource "aws_route_table_association" "dev_public_subnet_association" {
   count          = 2
   route_table_id = aws_route_table.dev_public_route_table.id
@@ -93,7 +87,6 @@ resource "aws_route_table_association" "dev_public_subnet_association" {
 }
 
 # AWS private Route table association
-
 resource "aws_route_table_association" "dev_private_subnet_association" {
   count          = 2
   route_table_id = aws_default_route_table.dev_private_route_table.id
